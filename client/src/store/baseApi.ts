@@ -8,7 +8,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const baseApi = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-   https://r-expert-backend.onrender.com/api
+   baseUrl: 'https://r-expert-backend.onrender.com/api',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('admin_token');
       if (token) headers.set('Authorization', `Bearer ${token}`);

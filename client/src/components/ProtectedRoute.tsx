@@ -17,4 +17,4 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   return user ? <>{children}</> : <Navigate to="/admin/login" replace />;
 };
 
-expo
+export default ProtectedRoute;

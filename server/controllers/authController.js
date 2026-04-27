@@ -1,42 +1,36 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
 
-const generateToken = (id) =>
-  jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+const generateToken = (payload) =>
+  jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-const login = async (req, res, next) => {
+const login = (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user || !(await user.comparePassword(password))) {
+    const adminEmail = (process.env.ADMIN_EMAIL || '').toLowerCase();
+    const adminPassword = process.env.ADMIN_PASSWORD || '';
+
+    if (email.toLowerCase() !== adminEmail || password !== adminPassword) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-    if (user.role !== 'admin') {
-      return res.status(403).json({ message: 'Access denied' });
-    }
 
-    const token = generateToken(user._id);
+    const token = generateToken({ id: 'admin', email: adminEmail, role: 'admin' });
     res.json({
       token,
-      user: { id: user._id, email: user.email, name: user.name, role: user.role },
+      user: { id: 'admin', email: adminEmail, name: 'Admin', role: 'admin' },
     });
   } catch (err) {
     next(err);
   }
 };
 
-const getMe = async (req, res, next) => {
-  try {
-    res.json({
-      user: { id: req.user._id, email: req.user.email, name: req.user.name, role: req.user.role },
-    });
-  } catch (err) {
-    next(err);
-  }
+const getMe = (req, res) => {
+  res.json({
+    user: { id: 'admin', email: req.user.email, name: 'Admin', role: 'admin' },
+  });
 };
 
 module.exports = { login, getMe };

@@ -1,78 +1,108 @@
-const Submission = require('../models/Submission');
-const { sendSubmissionConfirmation, sendAdminReply } = require('../utils/email');
+const fs = require('fs');
+const path = require('path');
+const { readAll, appendRow, findById, updateById, generateId } = require('../utils/csvStore');
+const { sendSubmissionConfirmation, sendAdminReply, sendOtp } = require('../utils/email');
+const { generateOtp, saveOtp, verifyOtp } = require('../utils/otpStore');
+
+// Adds _id alias so frontend RTK Query cache tags (which use _id) work correctly
+const withId = (row) => row ? { ...row, _id: row.id } : row;
 
 const createSubmission = async (req, res, next) => {
   try {
-    const { firstName, lastName, email, phone, country, service, pages, language, message } =
-      req.body;
+    const {
+      firstName,
+      lastName = '',
+      email,
+      phone,
+      country = 'India',
+      service,
+      pages = 1,
+      language = 'English',
+      message = '',
+    } = req.body;
 
-    const submissionData = {
+    const now = new Date().toISOString();
+    const submission = {
+      id: generateId(),
       firstName,
       lastName,
-      email,
+      email: email.toLowerCase().trim(),
       phone,
       country,
       service,
-      pages: parseInt(pages),
+      pages,
       language,
       message,
+      fileUrl: '',
+      fileName: '',
+      originalFileName: '',
+      status: 'pending',
+      adminNotes: '',
+      estimatedPrice: '',
+      createdAt: now,
+      updatedAt: now,
+      fileDeletedAt: '',
     };
 
     if (req.file) {
-      submissionData.fileUrl = `/uploads/${req.file.filename}`;
-      submissionData.fileName = req.file.filename;
-      submissionData.originalFileName = req.file.originalname;
+      submission.fileUrl = `/uploads/${req.file.filename}`;
+      submission.fileName = req.file.filename;
+      submission.originalFileName = req.file.originalname;
     }
 
-    const submission = await Submission.create(submissionData);
+    appendRow(submission);
 
-    // Send confirmation email (non-blocking)
-    sendSubmissionConfirmation(submission).catch((err) =>
+    sendSubmissionConfirmation(submission).catch(err =>
       console.error('Submission email error:', err.message)
     );
 
     res.status(201).json({
       message: 'Submission received successfully',
-      submissionId: submission._id,
+      submissionId: submission.id,
     });
   } catch (err) {
     next(err);
   }
 };
 
-const getAllSubmissions = async (req, res, next) => {
+const getAllSubmissions = (req, res, next) => {
   try {
     const { status, page = 1, limit = 20, search } = req.query;
-    const filter = {};
-    if (status) filter.status = status;
+    let rows = readAll();
+
+    if (status) {
+      rows = rows.filter(r => r.status === status);
+    }
     if (search) {
-      filter.$or = [
-        { firstName: { $regex: search, $options: 'i' } },
-        { lastName: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
-      ];
+      const s = search.toLowerCase();
+      rows = rows.filter(r =>
+        r.firstName.toLowerCase().includes(s) ||
+        r.lastName.toLowerCase().includes(s) ||
+        r.email.toLowerCase().includes(s)
+      );
     }
 
-    const total = await Submission.countDocuments(filter);
-    const submissions = await Submission.find(filter)
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit));
+    rows.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    const total = rows.length;
+    const p = parseInt(page);
+    const l = parseInt(limit);
+    const submissions = rows.slice((p - 1) * l, p * l).map(withId);
 
     res.json({
       submissions,
-      pagination: { total, page: parseInt(page), pages: Math.ceil(total / limit) },
+      pagination: { total, page: p, pages: Math.ceil(total / l) },
     });
   } catch (err) {
     next(err);
   }
 };
 
-const getSubmissionById = async (req, res, next) => {
+const getSubmissionById = (req, res, next) => {
   try {
-    const submission = await Submission.findById(req.params.id);
+    const submission = findById(req.params.id);
     if (!submission) return res.status(404).json({ message: 'Submission not found' });
-    res.json(submission);
+    res.json(withId(submission));
   } catch (err) {
     next(err);
   }
@@ -81,55 +111,134 @@ const getSubmissionById = async (req, res, next) => {
 const updateSubmissionStatus = async (req, res, next) => {
   try {
     const { status, adminNotes, replyMessage, estimatedPrice } = req.body;
-    const submission = await Submission.findById(req.params.id);
-    if (!submission) return res.status(404).json({ message: 'Submission not found' });
+    const existing = findById(req.params.id);
+    if (!existing) return res.status(404).json({ message: 'Submission not found' });
 
-    if (status) submission.status = status;
-    if (adminNotes !== undefined) submission.adminNotes = adminNotes;
-    if (estimatedPrice !== undefined) submission.estimatedPrice = estimatedPrice;
-    await submission.save();
+    const updates = {};
+    if (status !== undefined) updates.status = status;
+    if (adminNotes !== undefined) updates.adminNotes = adminNotes;
+    if (estimatedPrice !== undefined) updates.estimatedPrice = estimatedPrice;
+
+    const submission = updateById(req.params.id, updates);
 
     if (replyMessage) {
       const subject = `Update on your ${submission.service} request`;
-      sendAdminReply(submission.email, submission.firstName, replyMessage, subject).catch((err) =>
+      sendAdminReply(submission.email, submission.firstName, replyMessage, subject).catch(err =>
         console.error('Reply email error:', err.message)
       );
     }
 
-    res.json({ message: 'Submission updated', submission });
+    res.json({ message: 'Submission updated', submission: withId(submission) });
   } catch (err) {
     next(err);
   }
 };
 
-const getDashboardStats = async (req, res, next) => {
+const getDashboardStats = (req, res, next) => {
   try {
-    const [total, pending, inProgress, completed, cancelled] = await Promise.all([
-      Submission.countDocuments(),
-      Submission.countDocuments({ status: 'pending' }),
-      Submission.countDocuments({ status: 'in-progress' }),
-      Submission.countDocuments({ status: 'completed' }),
-      Submission.countDocuments({ status: 'cancelled' }),
-    ]);
+    const rows = readAll();
+    const count = s => rows.filter(r => r.status === s).length;
+    const recentSubmissions = [...rows]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 5)
+      .map(withId);
 
-    const recentSubmissions = await Submission.find().sort({ createdAt: -1 }).limit(5);
-
-    res.json({ total, pending, inProgress, completed, cancelled, recentSubmissions });
+    res.json({
+      total: rows.length,
+      pending: count('pending'),
+      inProgress: count('in-progress'),
+      completed: count('completed'),
+      cancelled: count('cancelled'),
+      recentSubmissions,
+    });
   } catch (err) {
     next(err);
   }
 };
 
-const getSubmissionsByEmail = async (req, res, next) => {
+const sendOtpHandler = async (req, res, next) => {
   try {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: 'Email is required' });
 
-    const submissions = await Submission.find({ email: email.toLowerCase().trim() })
-      .select('_id service status pages language estimatedPrice adminNotes createdAt updatedAt')
-      .sort({ createdAt: -1 });
+    const otp = generateOtp();
+    saveOtp(email, otp);
+
+    await sendOtp(email.toLowerCase().trim(), otp);
+    res.json({ message: 'OTP sent to your email' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getSubmissionsByEmail = (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+    if (!otp) return res.status(400).json({ message: 'OTP is required' });
+
+    if (!verifyOtp(email, otp)) {
+      return res.status(401).json({ message: 'Invalid or expired OTP' });
+    }
+
+    const submissions = readAll()
+      .filter(r => r.email === email.toLowerCase().trim())
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .map(r => ({
+        _id: r.id,
+        service: r.service,
+        status: r.status,
+        pages: r.pages,
+        language: r.language,
+        estimatedPrice: r.estimatedPrice,
+        adminNotes: r.adminNotes,
+        createdAt: r.createdAt,
+        updatedAt: r.updatedAt,
+      }));
 
     res.json({ submissions });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const exportSubmissions = (req, res, next) => {
+  try {
+    const csvPath = path.join(__dirname, '../data/submissions.csv');
+    if (!fs.existsSync(csvPath)) {
+      return res.status(404).json({ message: 'No submissions data found' });
+    }
+    const date = new Date().toISOString().slice(0, 10);
+    res.download(csvPath, `submissions-${date}.csv`);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deleteSubmissionFile = (req, res, next) => {
+  try {
+    const submission = findById(req.params.id);
+    if (!submission) return res.status(404).json({ message: 'Submission not found' });
+    if (!submission.fileUrl) return res.status(400).json({ message: 'No file attached to this submission' });
+
+    // Delete physical file from disk
+    if (submission.fileName) {
+      const filePath = path.join(__dirname, '../uploads', submission.fileName);
+      if (fs.existsSync(filePath)) {
+        try { fs.unlinkSync(filePath); } catch (e) {
+          console.error('File delete error:', e.message);
+        }
+      }
+    }
+
+    const updated = updateById(req.params.id, {
+      fileUrl: '',
+      fileName: '',
+      originalFileName: '',
+      fileDeletedAt: new Date().toISOString(),
+    });
+
+    res.json({ message: 'File deleted successfully', submission: withId(updated) });
   } catch (err) {
     next(err);
   }
@@ -142,4 +251,7 @@ module.exports = {
   updateSubmissionStatus,
   getDashboardStats,
   getSubmissionsByEmail,
+  deleteSubmissionFile,
+  exportSubmissions,
+  sendOtpHandler,
 };

@@ -12,6 +12,7 @@ import Submit from './pages/Submit';
 import RateZones from './pages/RateZones';
 import OrderStatus from './pages/OrderStatus';
 import Contact from './pages/Contact';
+import Pricing from './pages/Pricing';
 import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
 import SubmissionDetail from './pages/admin/SubmissionDetail';
@@ -72,6 +73,7 @@ function App() {
             <Route path="/rate-zones" element={<PublicLayout><RateZones /></PublicLayout>} />
             <Route path="/order-status" element={<PublicLayout><OrderStatus /></PublicLayout>} />
             <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
+            <Route path="/pricing" element={<PublicLayout><Pricing /></PublicLayout>} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route
               path="/admin/dashboard"

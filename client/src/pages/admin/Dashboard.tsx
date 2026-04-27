@@ -87,6 +87,25 @@ const AdminDashboard = () => {
   const handleStatusFilter = (value: string) =>
     setQueryParams((p) => ({ ...p, status: value ?? '', page: 1 }));
 
+  const handleDownloadCsv = async () => {
+    try {
+      const token = localStorage.getItem('admin_token');
+      const res = await fetch('http://localhost:5000/api/submissions/export', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error('Export failed');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `submissions-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      toast.error('Failed to download CSV');
+    }
+  };
+
   // ── Columns ──────────────────────────────────────────────────────────────
   const submissionColumns: ColumnsType<Submission> = [
     {
@@ -286,6 +305,9 @@ const AdminDashboard = () => {
               loading={subsFetching && !subsLoading}
             >
               Refresh
+            </Button>
+            <Button icon={<DownloadOutlined />} onClick={handleDownloadCsv}>
+              Download CSV
             </Button>
           </div>
 

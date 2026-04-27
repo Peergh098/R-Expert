@@ -81,6 +81,18 @@ export const submissionsApi = baseApi.injectEndpoints({
         'SubmissionStats',
       ],
     }),
+
+    /** Admin — delete uploaded file, keep all other submission data */
+    deleteSubmissionFile: builder.mutation<{ message: string; submission: Submission }, string>({
+      query: (id) => ({
+        url: `/submissions/${id}/file`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _err, id) => [
+        { type: 'Submission', id },
+        { type: 'Submission', id: 'LIST' },
+      ],
+    }),
   }),
 });
 
@@ -90,4 +102,5 @@ export const {
   useGetSubmissionStatsQuery,
   useGetSubmissionByIdQuery,
   useUpdateSubmissionStatusMutation,
+  useDeleteSubmissionFileMutation,
 } = submissionsApi;

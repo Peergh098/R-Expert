@@ -133,4 +133,23 @@ const sendAdminContactNotification = async (contact) => {
   });
 };
 
-module.exports = { sendSubmissionConfirmation, sendContactConfirmation, sendAdminReply, sendAdminContactNotification };
+const sendOtp = async (to, otp) => {
+  const transporter = createTransporter();
+  const html = baseLayout(`
+    <h2 style="color:#1e3a5f;margin-top:0;">Your Verification Code</h2>
+    <p>Use the code below to view your order status. It expires in <strong>10 minutes</strong>.</p>
+    <div style="text-align:center;margin:30px 0;">
+      <span style="font-size:40px;font-weight:800;letter-spacing:12px;color:#1e3a5f;">${otp}</span>
+    </div>
+    <p style="color:#6b7280;font-size:13px;">If you didn't request this, you can safely ignore this email.</p>
+  `);
+
+  return transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to,
+    subject: 'Your Order Tracking OTP – Research Experts',
+    html,
+  });
+};
+
+module.exports = { sendSubmissionConfirmation, sendContactConfirmation, sendAdminReply, sendAdminContactNotification, sendOtp };

@@ -36,46 +36,64 @@ const faqs = [
 ];
 
 const FAQ = () => {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
     <section className="py-20 bg-gray-50">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="section-title">Frequently Asked Questions</h2>
-          <p className="section-subtitle mx-auto">
-            Everything you need to know about our services.
-          </p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* Header */}
+        <div className="text-center mb-14">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-[#1e3a5f]">Frequently Asked Questions</h2>
+          <p className="text-gray-500 mt-3 max-w-xl mx-auto">Everything you need to know about our services. Can't find your answer? Feel free to contact us.</p>
         </div>
-        <div className="space-y-3">
-          {faqs.map((faq, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm"
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors"
+
+        {/* FAQ Grid — two columns on desktop */}
+        <div className="grid md:grid-cols-2 gap-4 items-start">
+          {faqs.map((faq, i) => {
+            const isOpen = openIndex === i;
+            return (
+              <div
+                key={i}
+                className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+                  isOpen
+                    ? 'bg-[#1e3a5f] border-[#1e3a5f] shadow-xl'
+                    : 'bg-white border-gray-200 shadow-sm hover:border-[#1e3a5f] hover:shadow-md'
+                }`}
               >
-                <span className="font-semibold text-[#1e3a5f] text-sm md:text-base">{faq.q}</span>
-                <svg
-                  className={`w-5 h-5 text-[#1e3a5f] shrink-0 transition-transform duration-200 ${
-                    openIndex === i ? 'rotate-180' : ''
-                  }`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+                <button
+                  onClick={() => setOpenIndex(isOpen ? null : i)}
+                  className="w-full text-left px-6 py-5 flex items-start justify-between gap-4"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              {openIndex === i && (
-                <div className="px-6 pb-5">
-                  <p className="text-gray-600 text-sm leading-relaxed">{faq.a}</p>
-                </div>
-              )}
-            </div>
-          ))}
+                  <div className="flex items-start gap-3">
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold ${
+                      isOpen ? 'bg-amber-400 text-[#1e3a5f]' : 'bg-[#1e3a5f]/10 text-[#1e3a5f]'
+                    }`}>
+                      {i + 1}
+                    </div>
+                    <span className={`font-semibold text-sm md:text-base leading-snug ${isOpen ? 'text-white' : 'text-[#1e3a5f]'}`}>
+                      {faq.q}
+                    </span>
+                  </div>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all duration-200 ${
+                    isOpen ? 'bg-white/20 rotate-180' : 'bg-gray-100'
+                  }`}>
+                    <svg className={`w-3.5 h-3.5 ${isOpen ? 'text-amber-400' : 'text-[#1e3a5f]'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </button>
+                {isOpen && (
+                  <div className="px-6 pb-6 pt-0">
+                    <div className="ml-10">
+                      <div className="w-8 h-px bg-amber-400 mb-3" />
+                      <p className="text-blue-100 text-sm leading-relaxed">{faq.a}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

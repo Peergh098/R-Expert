@@ -8,12 +8,14 @@ import {
   ArrowLeftOutlined, DownloadOutlined, MailOutlined, SaveOutlined,
   EditOutlined, CheckCircleOutlined, ClockCircleOutlined,
   SyncOutlined, CloseCircleOutlined, FileTextOutlined, ReloadOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import {
   useGetSubmissionByIdQuery,
   useUpdateSubmissionStatusMutation,
+  useDeleteSubmissionFileMutation,
 } from '../../store/submissionsApi';
 import type { SubmissionStatus } from '../../types';
 import { SERVICE_LABELS } from '../../data/services';
@@ -64,6 +66,7 @@ const SubmissionDetail = () => {
   });
 
   const [updateStatus, { isLoading: isSaving }] = useUpdateSubmissionStatusMutation();
+  const [deleteFile, { isLoading: isDeletingFile }] = useDeleteSubmissionFileMutation();
 
   // ── Handlers ────────────────────────────────────────────────────────────
   const handleUpdate = async (values: {
@@ -89,6 +92,23 @@ const SubmissionDetail = () => {
     } catch {
       toast.error('Failed to send email.');
     }
+  };
+
+  const handleDeleteFile = () => {
+    confirm({
+      title: 'Delete uploaded file?',
+      content: 'The file will be permanently removed from disk. The submission record will be kept.',
+      okType: 'danger',
+      okText: 'Delete File',
+      onOk: async () => {
+        try {
+          await deleteFile(id!).unwrap();
+          toast.success('File deleted successfully');
+        } catch {
+          toast.error('Failed to delete file');
+        }
+      },
+    });
   };
 
   const handleStatusChange = (newStatus: SubmissionStatus) => {
@@ -216,7 +236,7 @@ const SubmissionDetail = () => {
               </Card>
 
               {/* File */}
-              {submission.fileUrl && (
+              {submission.fileUrl ? (
                 <Card
                   title={<Text strong style={{ color: '#1e3a5f' }}>Uploaded Document</Text>}
                   className="rounded-2xl shadow-sm"
@@ -233,14 +253,41 @@ const SubmissionDetail = () => {
                         <Text type="secondary" style={{ fontSize: 12 }}>Uploaded document</Text>
                       </div>
                     </Space>
-                    <Tooltip title="Download file">
-                      <a href={submission.fileUrl} target="_blank" rel="noreferrer">
-                        <Button type="primary" icon={<DownloadOutlined />}>Download</Button>
-                      </a>
-                    </Tooltip>
+                    <Space>
+                      <Tooltip title="Download file">
+                        <a href={submission.fileUrl} target="_blank" rel="noreferrer">
+                          <Button type="primary" icon={<DownloadOutlined />}>Download</Button>
+                        </a>
+                      </Tooltip>
+                      <Tooltip title="Delete file from server">
+                        <Button
+                          danger
+                          icon={<DeleteOutlined />}
+                          loading={isDeletingFile}
+                          onClick={handleDeleteFile}
+                        >
+                          Delete File
+                        </Button>
+                      </Tooltip>
+                    </Space>
                   </div>
                 </Card>
-              )}
+              ) : submission.fileDeletedAt ? (
+                <Card
+                  title={<Text strong style={{ color: '#1e3a5f' }}>Uploaded Document</Text>}
+                  className="rounded-2xl shadow-sm"
+                >
+                  <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 text-gray-400">
+                    <DeleteOutlined />
+                    <div>
+                      <Text type="secondary" className="block text-sm">File deleted</Text>
+                      <Text type="secondary" style={{ fontSize: 12 }}>
+                        Removed on {new Date(submission.fileDeletedAt).toLocaleString('en-IN')}
+                      </Text>
+                    </div>
+                  </div>
+                </Card>
+              ) : null}
 
               {/* Internal notes preview */}
               {submission.adminNotes && (

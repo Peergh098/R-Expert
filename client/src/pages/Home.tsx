@@ -1,8 +1,6 @@
 import Hero from '../components/home/Hero';
 import ServicesSection from '../components/home/ServicesSection';
-import WhyChooseUs from '../components/home/WhyChooseUs';
-import Testimonials from '../components/home/Testimonials';
-import CTA from '../components/home/CTA';
+import HowItWorks from '../components/home/HowItWorks';
 import FAQ from '../components/home/FAQ';
 
 const Home = () => {
@@ -10,9 +8,9 @@ const Home = () => {
     <>
       <Hero />
       <ServicesSection />
-      <WhyChooseUs />
-      <Testimonials />
-      <CTA />
+      <HowItWorks />
+      {/* <Testimonials /> */}
+      {/* <CTA /> */}
       <FAQ />
     </>
   );

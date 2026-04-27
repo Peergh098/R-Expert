@@ -1,10 +1,16 @@
 export type ServiceId =
-  | 'plagiarism-check'
-  | 'plagiarism-removal'
+  | 'plagiarism-report'
+  | 'ai-detection-report'
+  | 'drillbit-report'
+  | 'ai-content-reduction'
+  | 'writing-assistance'
+  | 'data-analysis'
+  | 'document-formatting'
   | 'proofreading'
-  | 'citation-formatting'
-  | 'thesis-writing'
-  | 'document-formatting';
+  | 'grammar-enhancement'
+  | 'reference-formatting'
+  | 'presentation-design'
+  | 'reviewer-comments-revision';
 
 export type SubmissionStatus = 'pending' | 'in-progress' | 'completed' | 'cancelled';
 
@@ -27,6 +33,7 @@ export interface Submission {
   estimatedPrice: number | null;
   createdAt: string;
   updatedAt: string;
+  fileDeletedAt?: string | null;
 }
 
 export interface ContactMessage {

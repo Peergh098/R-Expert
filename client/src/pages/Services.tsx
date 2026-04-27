@@ -31,7 +31,7 @@ const Services = () => {
               const colors = colorMap[service.color] || colorMap.blue;
               return (
                 <div key={service.id} className="card p-8 flex flex-col group">
-                  <div className="flex items-start gap-5 mb-5">
+                  <div className="flex items-center gap-5 mb-5">
                     <div
                       className={`w-16 h-16 rounded-xl flex items-center justify-center text-3xl shrink-0 ${colors.bg}`}
                     >
@@ -39,7 +39,6 @@ const Services = () => {
                     </div>
                     <div>
                       <h2 className="text-2xl font-bold text-[#1e3a5f] mb-1">{service.title}</h2>
-                      <span className={`text-sm font-semibold ${colors.text}`}>{service.price}</span>
                     </div>
                   </div>
 
@@ -66,20 +65,12 @@ const Services = () => {
                       </svg>
                       Turnaround: <strong className="text-gray-700">{service.turnaround}</strong>
                     </div>
-                    <div className="flex gap-3">
-                      <Link
-                        to={`/services/${service.id}`}
-                        className={`text-sm font-semibold border ${colors.border} ${colors.text} px-4 py-2 rounded-lg hover:opacity-80 transition-opacity`}
-                      >
-                        Learn More
-                      </Link>
-                      <Link
-                        to={`/submit?service=${service.id}`}
-                        className="bg-[#1e3a5f] hover:bg-[#152844] text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
-                      >
-                        Order Now
-                      </Link>
-                    </div>
+                    <Link
+                      to="/submit"
+                      className="bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors shadow-lg hover:shadow-amber-500/30"
+                    >
+                      Submit Document
+                    </Link>
                   </div>
                 </div>
               );

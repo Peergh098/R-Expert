@@ -1,4 +1,6 @@
-const ContactMessage = require('../models/ContactMessage');
+const {
+  readAllContacts, appendContact, findContactById, updateContactById, generateContactId,
+} = require('../utils/contactCsvStore');
 const { sendContactConfirmation, sendAdminReply, sendAdminContactNotification } = require('../utils/email');
 
 const createContact = async (req, res, next) => {
@@ -8,12 +10,26 @@ const createContact = async (req, res, next) => {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const contact = await ContactMessage.create({ name, email, subject, message });
+    const now = new Date().toISOString();
+    const contact = {
+      id: generateContactId(),
+      name,
+      email: email.toLowerCase().trim(),
+      subject,
+      message,
+      isRead: 'false',
+      replyMessage: '',
+      repliedAt: '',
+      createdAt: now,
+      updatedAt: now,
+    };
 
-    sendContactConfirmation(contact).catch((err) =>
+    appendContact(contact);
+
+    sendContactConfirmation(contact).catch(err =>
       console.error('Contact confirmation email error:', err.message)
     );
-    sendAdminContactNotification(contact).catch((err) =>
+    sendAdminContactNotification(contact).catch(err =>
       console.error('Admin contact notification error:', err.message)
     );
 
@@ -23,19 +39,15 @@ const createContact = async (req, res, next) => {
   }
 };
 
-const getAllContacts = async (req, res, next) => {
+const getAllContacts = (req, res, next) => {
   try {
     const { page = 1, limit = 20 } = req.query;
-    const total = await ContactMessage.countDocuments();
-    const contacts = await ContactMessage.find()
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit));
+    const rows = readAllContacts().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const total = rows.length;
+    const p = parseInt(page), l = parseInt(limit);
+    const contacts = rows.slice((p - 1) * l, p * l).map(r => ({ ...r, _id: r.id, isRead: r.isRead === 'true' }));
 
-    res.json({
-      contacts,
-      pagination: { total, page: parseInt(page), pages: Math.ceil(total / limit) },
-    });
+    res.json({ contacts, pagination: { total, page: p, pages: Math.ceil(total / l) } });
   } catch (err) {
     next(err);
   }
@@ -44,13 +56,14 @@ const getAllContacts = async (req, res, next) => {
 const replyToContact = async (req, res, next) => {
   try {
     const { replyMessage } = req.body;
-    const contact = await ContactMessage.findById(req.params.id);
+    const contact = findContactById(req.params.id);
     if (!contact) return res.status(404).json({ message: 'Message not found' });
 
-    contact.isRead = true;
-    contact.replyMessage = replyMessage;
-    contact.repliedAt = new Date();
-    await contact.save();
+    updateContactById(req.params.id, {
+      isRead: 'true',
+      replyMessage,
+      repliedAt: new Date().toISOString(),
+    });
 
     await sendAdminReply(contact.email, contact.name, replyMessage, contact.subject);
     res.json({ message: 'Reply sent successfully' });

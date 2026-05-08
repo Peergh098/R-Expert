@@ -10,6 +10,7 @@ const {
   deleteSubmissionFile,
   exportSubmissions,
   sendOtpHandler,
+  sendDocumentToClient,
 } = require('../controllers/submissionController');
 const { protect, adminOnly } = require('../middleware/auth');
 const upload = require('../middleware/upload');
@@ -23,5 +24,6 @@ router.get('/', protect, adminOnly, getAllSubmissions);
 router.get('/:id', protect, adminOnly, getSubmissionById);
 router.put('/:id/status', protect, adminOnly, updateSubmissionStatus);
 router.delete('/:id/file', protect, adminOnly, deleteSubmissionFile);
+router.post('/:id/send-document', protect, adminOnly, sendDocumentToClient);
 
 module.exports = router;

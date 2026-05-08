@@ -10,7 +10,7 @@ const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const contactInfo = [
-  { icon: <MailOutlined className="text-2xl" />, label: 'Email', value: 'peergh098@hmail.com', href: 'mailto:peergh098@hmail.com' },
+  { icon: <MailOutlined className="text-2xl" />, label: 'Email', value: 'peergh098@gmail.com', href: 'mailto:peergh098@gmail.com' },
   { icon: <PhoneOutlined className="text-2xl" />, label: 'Phone', value: '+91 9149797692', href: 'tel:+919149797692' },
   { icon: <WhatsAppOutlined className="text-2xl" />, label: 'WhatsApp', value: 'Chat with us', href: 'https://wa.me/919149797692' },
   { icon: <EnvironmentOutlined className="text-2xl" />, label: 'Location', value: 'Chennai, Tamil Nadu, India', href: undefined },
@@ -28,7 +28,7 @@ const Contact = () => {
   }) => {
     try {
       await createContact(values).unwrap();
-      toast.success("Message sent! We'll reply within 24 hours.");
+      toast.success("Message sent! We'll reply shortly.");
       form.resetFields();
     } catch (err: unknown) {
       const msg = (err as { data?: { message?: string } })?.data?.message;
@@ -88,7 +88,7 @@ const Contact = () => {
                 {isSuccess && (
                   <Alert
                     message="Message sent successfully!"
-                    description="Our team will reply within 24 hours."
+                    description="Our team will reply shortly"
                     type="success"
                     showIcon
                     closable
@@ -107,7 +107,7 @@ const Contact = () => {
                   />
                 )}
 
-                <Form form={form} layout="vertical" onFinish={handleFinish} requiredMark="optional">
+                <Form form={form} layout="vertical" onFinish={handleFinish} requiredMark="optional" colon={false}>
                   <Row gutter={16}>
                     <Col xs={24} sm={12}>
                       <Form.Item name="name" label="Full Name"

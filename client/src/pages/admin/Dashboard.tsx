@@ -52,6 +52,8 @@ const AdminDashboard = () => {
     limit: 15,
     status: '',
     search: '',
+    email: '',
+    phone: '',
   });
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -87,6 +89,12 @@ const AdminDashboard = () => {
   const handleStatusFilter = (value: string) =>
     setQueryParams((p) => ({ ...p, status: value ?? '', page: 1 }));
 
+  const handleEmailFilter = (value: string) =>
+    setQueryParams((p) => ({ ...p, email: value, page: 1 }));
+
+  const handlePhoneFilter = (value: string) =>
+    setQueryParams((p) => ({ ...p, phone: value, page: 1 }));
+
   const handleDownloadCsv = async () => {
     try {
       const token = localStorage.getItem('admin_token');
@@ -111,10 +119,14 @@ const AdminDashboard = () => {
     {
       title: 'Client',
       key: 'client',
+      width: 180,
       render: (_, r) => (
         <div>
           <div className="font-medium">{r.firstName} {r.lastName}</div>
           <Text type="secondary" style={{ fontSize: 12 }}>{r.email}</Text>
+          {r.phone && (
+            <Text type="secondary" style={{ fontSize: 12, display: 'block' }}>{r.phone}</Text>
+          )}
         </div>
       ),
     },
@@ -122,6 +134,7 @@ const AdminDashboard = () => {
       title: 'Service',
       dataIndex: 'service',
       key: 'service',
+      width: 160,
       render: (s: string) => <Text style={{ fontSize: 12 }}>{SERVICE_LABELS[s] || s}</Text>,
     },
     { title: 'Pages', dataIndex: 'pages', key: 'pages', width: 70, align: 'center' },
@@ -278,14 +291,29 @@ const AdminDashboard = () => {
       ),
       children: (
         <>
-          <div className="flex flex-col sm:flex-row gap-3 mb-5">
+          <div className="flex flex-wrap gap-3 mb-5">
             <Search
               placeholder="Search by name or email..."
               allowClear
-              style={{ maxWidth: 300 }}
+              style={{ maxWidth: 260 }}
               onSearch={handleSearch}
               onChange={(e:any) => { if (!e.target.value) handleSearch(''); }}
               prefix={<SearchOutlined />}
+            />
+            <Input
+              placeholder="Filter by email"
+              allowClear
+              prefix={<MailOutlined className="text-gray-400" />}
+              style={{ maxWidth: 220 }}
+              onPressEnter={(e: any) => handleEmailFilter(e.target.value)}
+              onChange={(e) => { if (!e.target.value) handleEmailFilter(''); }}
+            />
+            <Input
+              placeholder="Filter by phone"
+              allowClear
+              style={{ maxWidth: 180 }}
+              onPressEnter={(e: any) => handlePhoneFilter(e.target.value)}
+              onChange={(e) => { if (!e.target.value) handlePhoneFilter(''); }}
             />
             <Select
               value={queryParams.status || undefined}

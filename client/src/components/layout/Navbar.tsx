@@ -5,7 +5,6 @@ const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Services', path: '/services' },
   { name: 'Pricing', path: '/pricing' },
-  { name: 'Track Order', path: '/order-status' },
   { name: 'Contact', path: '/contact' },
 ];
 
@@ -15,14 +14,14 @@ const Navbar = () => {
 
   return (
     <nav className="bg-[#1e3a5f] shadow-lg sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-3">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 shrink-0">
             <div className="w-9 h-9 bg-amber-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">R</span>
+              <span className="text-white font-bold text-lg">A</span>
             </div>
-              <span className="text-amber-400">Experts</span>
+            <span className="text-white font-bold text-lg">Academic <span className="text-amber-400">Sphere</span></span>
          
           </Link>
 
@@ -42,10 +41,10 @@ const Navbar = () => {
               </Link>
             ))}
             <Link
-              to="/submit"
+              to="/order-status"
               className="ml-4 bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors shadow-md"
             >
-              Submit Document
+              Track Order
             </Link>
           </div>
 
@@ -85,11 +84,11 @@ const Navbar = () => {
               </Link>
             ))}
             <Link
-              to="/submit"
+              to="/order-status"
               onClick={() => setIsOpen(false)}
               className="block mx-4 mt-3 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold text-center"
             >
-              Submit Document
+              Track Order
             </Link>
           </div>
         )}

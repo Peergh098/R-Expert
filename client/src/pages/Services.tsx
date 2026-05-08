@@ -58,16 +58,11 @@ const Services = () => {
                     </ul>
                   </div>
 
-                  <div className="flex items-center justify-between mt-auto pt-5 border-t border-gray-100">
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      Turnaround: <strong className="text-gray-700">{service.turnaround}</strong>
-                    </div>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3 mt-auto pt-5 border-t border-gray-100">
+                    
                     <Link
                       to="/submit"
-                      className="bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors shadow-lg hover:shadow-amber-500/30"
+                      className="inline-flex items-center justify-center whitespace-nowrap bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-lg hover:shadow-amber-500/30"
                     >
                       Submit Document
                     </Link>

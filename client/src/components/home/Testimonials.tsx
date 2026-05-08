@@ -2,7 +2,7 @@ const testimonials = [
   {
     name: 'Dr. Priya Sharma',
     role: 'PhD Scholar, IIT Delhi',
-    text: 'Research Experts helped reduce my thesis plagiarism from 32% to just 6% while keeping all my original ideas intact. Absolutely remarkable service!',
+    text: 'Academic Sphere helped reduce my thesis plagiarism from 32% to just 6% while keeping all my original ideas intact. Absolutely remarkable service!',
     rating: 5,
     avatar: 'PS',
   },
@@ -16,7 +16,7 @@ const testimonials = [
   {
     name: 'Dr. Anitha Kumar',
     role: 'Associate Professor, Bangalore',
-    text: 'I\'ve used Research Experts for over 15 journal papers now. Their citation formatting is flawless and they always deliver before the deadline.',
+    text: 'I\'ve used Academic Sphere for over 15 journal papers now. Their citation formatting is flawless and they always deliver before the deadline.',
     rating: 5,
     avatar: 'AK',
   },

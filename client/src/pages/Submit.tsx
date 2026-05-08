@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
-  Form, Input, Select, Button, Upload, Result, Typography, Card, Row, Col,
+  Form, Input, Select, Button, Upload, Result, Typography, Card, Row, Col, InputNumber,
 } from 'antd';
 import { UploadOutlined, CheckCircleOutlined, UserOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
 import type { UploadFile } from 'antd';
@@ -10,7 +10,6 @@ import { useCreateSubmissionMutation } from '../store/submissionsApi';
 import type { ServiceId } from '../types';
 
 const { Title, Text } = Typography;
-const { TextArea } = Input;
 const { Option } = Select;
 
 const SERVICE_OPTIONS: { value: ServiceId; label: string; icon: string }[] = [
@@ -51,9 +50,9 @@ const Submit = () => {
     formData.append('phone', String(values.whatsapp ?? ''));
     formData.append('service', String(values.service ?? ''));
     formData.append('country', 'India');
-    formData.append('pages', '1');
+    formData.append('pages', String(values.pages ?? 1));
     formData.append('language', 'English');
-    if (values.message) formData.append('message', String(values.message));
+    if (values.preferredTool) formData.append('preferredTool', String(values.preferredTool));
     if (fileList[0]?.originFileObj) {
       formData.append('file', fileList[0].originFileObj as File);
     }
@@ -77,7 +76,7 @@ const Submit = () => {
             title="Submission Received!"
             subTitle={
               <>
-                <p>Our team will review and contact you within 24 hours with a quote.</p>
+                <p>Our team will get back to your what's app number or mail id shortly</p>
                 <p className="mt-2">
                   Confirmation sent to <strong>{submittedEmail}</strong>
                 </p>
@@ -119,6 +118,33 @@ const Submit = () => {
             <Form form={form} layout="vertical" onFinish={handleFinish} scrollToFirstError requiredMark="optional">
 
               <Row gutter={24}>
+                {/* Name */}
+                <Col xs={24} sm={12}>
+                  <Form.Item name="name" label="Your Name"
+                    rules={[{ required: true, message: 'Name is required' }]}>
+                    <Input size="large" prefix={<UserOutlined className="text-gray-400" />} placeholder="John Doe" />
+                  </Form.Item>
+                </Col>
+
+                {/* Email */}
+                <Col xs={24} sm={12}>
+                  <Form.Item name="email" label="Email Address"
+                    rules={[
+                      { required: true, message: 'Email is required' },
+                      { type: 'email', message: 'Enter a valid email' },
+                    ]}>
+                    <Input size="large" prefix={<MailOutlined className="text-gray-400" />} placeholder="john@example.com" />
+                  </Form.Item>
+                </Col>
+
+                {/* WhatsApp */}
+                <Col xs={24} sm={12}>
+                  <Form.Item name="whatsapp" label="WhatsApp Number"
+                    rules={[{ required: true, message: 'WhatsApp number is required' }]}>
+                    <Input size="large" prefix={<PhoneOutlined className="text-gray-400" />} placeholder="+91 98765 43210" />
+                  </Form.Item>
+                </Col>
+
                 {/* Service */}
                 <Col xs={24} sm={12}>
                   <Form.Item name="service" label="Service Type"
@@ -165,37 +191,18 @@ const Submit = () => {
                   </Form.Item>
                 </Col>
 
-                {/* Email */}
+                {/* Number of Pages */}
                 <Col xs={24} sm={12}>
-                  <Form.Item name="email" label="Email Address"
-                    rules={[
-                      { required: true, message: 'Email is required' },
-                      { type: 'email', message: 'Enter a valid email' },
-                    ]}>
-                    <Input size="large" prefix={<MailOutlined className="text-gray-400" />} placeholder="john@example.com" />
+                  <Form.Item name="pages" label="Number of Pages"
+                    rules={[{ required: true, message: 'Number of pages is required' }]}>
+                    <InputNumber size="large" min={1} style={{ width: '100%' }} placeholder="e.g. 25" />
                   </Form.Item>
                 </Col>
 
-                {/* WhatsApp */}
-                <Col xs={24} sm={12}>
-                  <Form.Item name="whatsapp" label="WhatsApp Number"
-                    rules={[{ required: true, message: 'WhatsApp number is required' }]}>
-                    <Input size="large" prefix={<PhoneOutlined className="text-gray-400" />} placeholder="+91 98765 43210" />
-                  </Form.Item>
-                </Col>
-
-                {/* Name */}
-                <Col xs={24} sm={12}>
-                  <Form.Item name="name" label="Your Name"
-                    rules={[{ required: true, message: 'Name is required' }]}>
-                    <Input size="large" prefix={<UserOutlined className="text-gray-400" />} placeholder="John Doe" />
-                  </Form.Item>
-                </Col>
-
-                {/* Message */}
-                <Col xs={24} sm={12}>
-                  <Form.Item name="message" label="Additional Notes (optional)">
-                    <TextArea rows={1} placeholder="Any specific instructions..." size="large" />
+                {/* Preferred Tool */}
+                <Col xs={24}>
+                  <Form.Item name="preferredTool" label="Preferred Tool (optional)">
+                    <Input size="large" placeholder="e.g. Turnitin, iThenticate, Drillbit" />
                   </Form.Item>
                 </Col>
               </Row>

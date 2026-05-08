@@ -12,10 +12,10 @@ const Footer = () => {
           <div className="shrink-0">
             <Link to="/" className="flex items-center space-x-2 mb-3">
               <div className="w-9 h-9 bg-amber-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">R</span>
+                <span className="text-white font-bold text-lg">A</span>
               </div>
               <span className="text-white font-bold text-xl">
-                <span className="text-amber-400">Experts</span>
+                Academic <span className="text-amber-400">Sphere</span>
               </span>
             </Link>
             <p className="text-blue-200 text-sm leading-relaxed max-w-xs">
@@ -43,25 +43,24 @@ const Footer = () => {
           {/* Services */}
           <div className="flex-1 bg-white/5 rounded-2xl px-6 py-5">
             <h3 className="font-semibold text-amber-400 uppercase tracking-wide text-xs mb-4">Services</h3>
-            <ul className="grid grid-rows-4 grid-flow-col gap-x-8 gap-y-2">
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5">
               {[
-                ['Plagiarism Report', '/services/plagiarism-report'],
-                ['AI Detection Report', '/services/ai-detection-report'],
-                ['Drillbit Report', '/services/drillbit-report'],
-                ['AI Content Reduction', '/services/ai-content-reduction'],
-                ['Writing Assistance', '/services/writing-assistance'],
-                ['Data Analysis', '/services/data-analysis'],
-                ['Document Formatting', '/services/document-formatting'],
-                ['Proofreading & Editing', '/services/proofreading'],
-                ['Grammar Enhancement', '/services/grammar-enhancement'],
-                ['Reference Formatting', '/services/reference-formatting'],
-                ['Presentation Design', '/services/presentation-design'],
-                ['Reviewer Comments Revision', '/services/reviewer-comments-revision'],
-              ].map(([name, path]) => (
-                <li key={name}>
-                  <Link to={path} className="text-blue-200 hover:text-amber-400 text-xs transition-colors">
-                    {name}
-                  </Link>
+                'Plagiarism Report',
+                'AI Detection Report',
+                'Drillbit Report',
+                'AI Content Reduction',
+                'Writing Assistance',
+                'Data Analysis',
+                'Document Formatting',
+                'Proofreading & Editing',
+                'Grammar Enhancement',
+                'Reference Formatting',
+                'Presentation Design',
+                'Reviewer Comments Revision',
+              ].map((name) => (
+                <li key={name} className="flex items-center gap-1.5">
+                  <span className="w-1 h-1 rounded-full bg-amber-400/60 shrink-0" />
+                  <span className="text-blue-200 text-xs leading-snug">{name}</span>
                 </li>
               ))}
             </ul>
@@ -102,7 +101,7 @@ const Footer = () => {
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-blue-300 text-sm">
-            © {new Date().getFullYear()} Research Experts. All rights reserved.
+            © {new Date().getFullYear()} Academic Sphere. All rights reserved.
           </p>
           <div className="flex space-x-5 items-center">
             {['Privacy Policy', 'Terms of Service', 'Refund Policy'].map((item) => (

@@ -2,6 +2,44 @@ import type { ServiceInfo } from '../types';
 
 export const services: ServiceInfo[] = [
   {
+    id: 'writing-assistance',
+    title: 'Academic Writing',
+    shortDesc: 'Expert academic writing support for all research documents',
+    description:
+      'Get professional writing assistance for research papers, journal articles, thesis chapters, abstracts, and more. Our PhD-qualified writers help you communicate your research clearly and effectively.',
+    icon: '🖊️',
+    price: 'From ₹999/document',
+    features: [
+      'PhD-qualified writers',
+      'All research document types',
+      'Academic style compliance',
+      'Structured argumentation',
+      'Unlimited revisions',
+    ],
+    deliverables: ['Written/revised document', 'Outline', 'Revision notes'],
+    turnaround: '48–72 hours',
+    color: 'green',
+  },
+  {
+    id: 'data-analysis',
+    title: 'Data Analysis',
+    shortDesc: 'Statistical and qualitative data analysis for research',
+    description:
+      'Our experts perform statistical and qualitative data analysis using tools like SPSS, R, Python, and Excel. We help you interpret results and present findings clearly in your research.',
+    icon: '📈',
+    price: 'From ₹1,499/project',
+    features: [
+      'SPSS, R, Python, Excel',
+      'Descriptive & inferential statistics',
+      'Qualitative analysis',
+      'Results interpretation',
+      'Charts & tables included',
+    ],
+    deliverables: ['Analysis report', 'Data output files', 'Results summary'],
+    turnaround: '48–72 hours',
+    color: 'indigo',
+  },
+  {
     id: 'plagiarism-report',
     title: 'Plagiarism Report',
     shortDesc: 'Official plagiarism report with detailed similarity analysis',
@@ -41,12 +79,13 @@ export const services: ServiceInfo[] = [
   },
   {
     id: 'drillbit-report',
-    title: 'Drillbit Report',
-    shortDesc: 'Drillbit plagiarism analysis for Indian universities',
+    title: 'Drilbt Report',
+    shortDesc: 'Drilbt plagiarism analysis for Indian universities',
     description:
-      'Get an official Drillbit plagiarism report, widely accepted by Indian universities and institutions. Our report includes a full similarity analysis with matched source details.',
+      'Get an official Drilbt plagiarism report, widely accepted by Indian universities and institutions. Our report includes a full similarity analysis with matched source details.',
     icon: '🔎',
     price: 'From ₹399/document',
+
     features: [
       'Official Drillbit software',
       'Accepted by Indian universities',
@@ -77,44 +116,8 @@ export const services: ServiceInfo[] = [
     turnaround: '48 hours',
     color: 'purple',
   },
-  {
-    id: 'writing-assistance',
-    title: 'Writing Assistance',
-    shortDesc: 'Expert academic writing support for all research documents',
-    description:
-      'Get professional writing assistance for research papers, journal articles, thesis chapters, abstracts, and more. Our PhD-qualified writers help you communicate your research clearly and effectively.',
-    icon: '🖊️',
-    price: 'From ₹999/document',
-    features: [
-      'PhD-qualified writers',
-      'All research document types',
-      'Academic style compliance',
-      'Structured argumentation',
-      'Unlimited revisions',
-    ],
-    deliverables: ['Written/revised document', 'Outline', 'Revision notes'],
-    turnaround: '48–72 hours',
-    color: 'green',
-  },
-  {
-    id: 'data-analysis',
-    title: 'Data Analysis',
-    shortDesc: 'Statistical and qualitative data analysis for research',
-    description:
-      'Our experts perform statistical and qualitative data analysis using tools like SPSS, R, Python, and Excel. We help you interpret results and present findings clearly in your research.',
-    icon: '📈',
-    price: 'From ₹1,499/project',
-    features: [
-      'SPSS, R, Python, Excel',
-      'Descriptive & inferential statistics',
-      'Qualitative analysis',
-      'Results interpretation',
-      'Charts & tables included',
-    ],
-    deliverables: ['Analysis report', 'Data output files', 'Results summary'],
-    turnaround: '48–72 hours',
-    color: 'indigo',
-  },
+  
+  
   {
     id: 'document-formatting',
     title: 'Document Formatting',

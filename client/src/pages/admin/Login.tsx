@@ -38,9 +38,9 @@ const AdminLogin = () => {
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 shadow-xl"
             style={{ background: '#d97706' }}>
-            <span className="text-white font-bold text-2xl">R</span>
+            <span className="text-white font-bold text-2xl">A</span>
           </div>
-          <Title level={3} style={{ color: 'white', margin: 0 }}>Research Experts</Title>
+          <Title level={3} style={{ color: 'white', margin: 0 }}>Academic Sphere</Title>
           <Text style={{ color: '#93c5fd' }}>Admin Dashboard</Text>
         </div>
 

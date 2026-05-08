@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { services } from '../../data/services';
 
 const ServicesSection = () => {
@@ -15,17 +16,27 @@ const ServicesSection = () => {
           {services.map((service) => (
             <div
               key={service.id}
-              className="flex items-center justify-between bg-white hover:bg-[#1e3a5f] rounded-xl px-5 py-4 shadow-sm border border-gray-100 transition-all duration-300 group"
+              className="flex flex-col bg-white hover:bg-[#1e3a5f] rounded-xl px-5 py-4 shadow-sm border border-gray-100 transition-all duration-300 group"
             >
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{service.icon}</span>
-                <span className="text-[#1e3a5f] group-hover:text-white font-medium text-sm transition-colors">
+              {/* Title row */}
+              <div className="flex items-center justify-between">
+                <div className=''>
+                <span className="text-2xl shrink-0">{service.icon}</span>
+                <span className="text-[#1e3a5f] group-hover:text-white font-medium text-sm transition-colors leading-snug">
                   {service.title}
                 </span>
+                </div>
+
+                <Link
+                  to="/submit"
+                  className="text-xs font-semibold text-white bg-[#1e3a5f] group-hover:bg-amber-500 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+                >
+                  Get Started
+                </Link>
               </div>
-              <span className="text-xs font-semibold bg-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-white px-3 py-1 rounded-full transition-colors shrink-0 ml-2">
-                {service.turnaround}
-              </span>
+
+              {/* Turnaround + Button row */}
+              
             </div>
           ))}
         </div>

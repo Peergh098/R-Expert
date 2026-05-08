@@ -8,7 +8,7 @@ import {
   ArrowLeftOutlined, DownloadOutlined, MailOutlined, SaveOutlined,
   EditOutlined, CheckCircleOutlined, ClockCircleOutlined,
   SyncOutlined, CloseCircleOutlined, FileTextOutlined, ReloadOutlined,
-  DeleteOutlined,
+  DeleteOutlined, SendOutlined,
 } from '@ant-design/icons';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -16,6 +16,7 @@ import {
   useGetSubmissionByIdQuery,
   useUpdateSubmissionStatusMutation,
   useDeleteSubmissionFileMutation,
+  useSendDocumentToClientMutation,
 } from '../../store/submissionsApi';
 import type { SubmissionStatus } from '../../types';
 import { SERVICE_LABELS } from '../../data/services';
@@ -67,6 +68,7 @@ const SubmissionDetail = () => {
 
   const [updateStatus, { isLoading: isSaving }] = useUpdateSubmissionStatusMutation();
   const [deleteFile, { isLoading: isDeletingFile }] = useDeleteSubmissionFileMutation();
+  const [sendDocument, { isLoading: isSendingDoc }] = useSendDocumentToClientMutation();
 
   // ── Handlers ────────────────────────────────────────────────────────────
   const handleUpdate = async (values: {
@@ -109,6 +111,15 @@ const SubmissionDetail = () => {
         }
       },
     });
+  };
+
+  const handleSendDocument = async () => {
+    try {
+      await sendDocument(id!).unwrap();
+      toast.success('Document sent to client email!');
+    } catch {
+      toast.error('Failed to send document.');
+    }
   };
 
   const handleStatusChange = (newStatus: SubmissionStatus) => {
@@ -217,6 +228,11 @@ const SubmissionDetail = () => {
                     <Text strong>{submission.pages} pages</Text>
                   </Descriptions.Item>
                   <Descriptions.Item label="Language">{submission.language}</Descriptions.Item>
+                  {submission.preferredTool && (
+                    <Descriptions.Item label="Preferred Tool" span={2}>
+                      <Text strong>{submission.preferredTool}</Text>
+                    </Descriptions.Item>
+                  )}
                   {submission.estimatedPrice != null && (
                     <Descriptions.Item label="Quoted Price">
                       <Text strong style={{ color: '#16a34a' }}>
@@ -255,7 +271,7 @@ const SubmissionDetail = () => {
                     </Space>
                     <Space>
                       <Tooltip title="Download file">
-                        <a href={submission.fileUrl} target="_blank" rel="noreferrer">
+                        <a href={`http://localhost:5000/uploads/${submission.fileName}`} target="_blank" rel="noreferrer">
                           <Button type="primary" icon={<DownloadOutlined />}>Download</Button>
                         </a>
                       </Tooltip>
@@ -362,6 +378,18 @@ const SubmissionDetail = () => {
                   >
                     Send Email Reply
                   </Button>
+                  {submission.status === 'completed' && submission.fileUrl && (
+                    <Button
+                      block
+                      size="large"
+                      icon={<SendOutlined />}
+                      loading={isSendingDoc}
+                      onClick={handleSendDocument}
+                      style={{ background: '#16a34a', borderColor: '#16a34a', color: 'white' }}
+                    >
+                      Send Document to Client
+                    </Button>
+                  )}
                 </Space>
               </Form>
             </Card>
@@ -415,12 +443,12 @@ const SubmissionDetail = () => {
           >
             <TextArea
               rows={10}
-              placeholder={`Dear ${submission.firstName},\n\nThank you for your submission...\n\nBest regards,\nResearch Experts Team`}
+              placeholder={`Dear ${submission.firstName},\n\nThank you for your submission...\n\nBest regards,\nAcademic Sphere Team`}
               size="large"
             />
           </Form.Item>
           <Text type="secondary" style={{ fontSize: 12 }}>
-            Sent as a professional HTML email from the Research Experts team.
+            Sent as a professional HTML email from the Academic Sphere team.
           </Text>
         </Form>
       </Drawer>

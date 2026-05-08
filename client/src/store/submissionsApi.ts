@@ -8,6 +8,8 @@ export interface GetSubmissionsParams {
   limit?: number;
   status?: string;
   search?: string;
+  email?: string;
+  phone?: string;
 }
 
 export interface GetSubmissionsResponse {
@@ -41,10 +43,12 @@ export const submissionsApi = baseApi.injectEndpoints({
 
     /** Admin — paginated list with optional status / search filters */
     getSubmissions: builder.query<GetSubmissionsResponse, GetSubmissionsParams>({
-      query: ({ page = 1, limit = 15, status, search } = {}) => {
+      query: ({ page = 1, limit = 15, status, search, email, phone } = {}) => {
         const params = new URLSearchParams({ page: String(page), limit: String(limit) });
         if (status) params.append('status', status);
         if (search) params.append('search', search);
+        if (email) params.append('email', email);
+        if (phone) params.append('phone', phone);
         return `/submissions?${params}`;
       },
       providesTags: (result) =>
@@ -93,6 +97,14 @@ export const submissionsApi = baseApi.injectEndpoints({
         { type: 'Submission', id: 'LIST' },
       ],
     }),
+
+    /** Admin — send completed document to client email */
+    sendDocumentToClient: builder.mutation<{ message: string }, string>({
+      query: (id) => ({
+        url: `/submissions/${id}/send-document`,
+        method: 'POST',
+      }),
+    }),
   }),
 });
 
@@ -103,4 +115,5 @@ export const {
   useGetSubmissionByIdQuery,
   useUpdateSubmissionStatusMutation,
   useDeleteSubmissionFileMutation,
+  useSendDocumentToClientMutation,
 } = submissionsApi;

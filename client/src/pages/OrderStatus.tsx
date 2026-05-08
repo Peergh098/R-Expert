@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Form, Input, Button, Card, Typography, Tag, Timeline, Empty, Divider } from 'antd';
 import {
-  MailOutlined, SearchOutlined, FileTextOutlined,
+  MailOutlined, SearchOutlined, FileTextOutlined, DownloadOutlined,
   ClockCircleOutlined, CheckCircleOutlined, SyncOutlined, CloseCircleOutlined,
   SafetyOutlined,
 } from '@ant-design/icons';
@@ -95,7 +95,7 @@ const OrderStatus = () => {
   return (
     <>
       <div className="bg-[#1e3a5f] text-white py-14">
-        <div className="max-w-3xl mx-auto px-4 text-center">
+        <div className="max-w-[968px] mx-auto px-4 text-center">
           <Title level={1} style={{ color: 'white', margin: 0 }}>Track Your Order</Title>
           <Text style={{ color: '#93c5fd', fontSize: 16 }}>
             Enter your email address to check the status of your submissions.
@@ -104,7 +104,7 @@ const OrderStatus = () => {
       </div>
 
       <section className="py-14 bg-gray-50 min-h-screen">
-        <div className="max-w-3xl mx-auto px-4">
+        <div className="max-w-[968px] mx-auto px-4">
 
           {/* Step 1 — Email */}
           {step === 'email' && (
@@ -190,39 +190,36 @@ const OrderStatus = () => {
                   <Empty description="No submissions found for this email address." />
                 </Card>
               ) : (
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {submissions.map((s) => {
                     const status = STATUS_CONFIG[s.status] ?? STATUS_CONFIG['pending'];
                     return (
                       <Card key={s._id} className="rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex items-start justify-between flex-wrap gap-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-[#1e3a5f]/10 rounded-xl flex items-center justify-center text-[#1e3a5f]">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-10 h-10 bg-[#1e3a5f]/10 rounded-xl flex items-center justify-center text-[#1e3a5f] shrink-0">
                               <FileTextOutlined className="text-lg" />
                             </div>
-                            <div>
-                              <Text strong className="text-[#1e3a5f] block">
+                            <div className="min-w-0">
+                              <Text strong className="text-[#1e3a5f] block truncate">
                                 {SERVICE_LABELS[s.service] || s.service}
                               </Text>
-                              <Text className="text-xs text-gray-400">Order ID: {s._id}</Text>
+                              <Text className="text-xs text-gray-400 truncate block">Order ID: {s._id}</Text>
                             </div>
                           </div>
-                          <Tag color={status.color} icon={status.icon} className="text-sm px-3 py-1 rounded-full">
+                          <Tag color={status.color} icon={status.icon} className="text-sm px-3 py-1 rounded-full shrink-0">
                             {status.label}
                           </Tag>
                         </div>
 
                         <Divider style={{ margin: '16px 0' }} />
 
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                        <div className="grid grid-cols-3 gap-4 text-sm">
                           <div>
                             <Text className="text-xs text-gray-400 block">Pages</Text>
                             <Text strong>{s.pages}</Text>
                           </div>
-                          <div>
-                            <Text className="text-xs text-gray-400 block">Language</Text>
-                            <Text strong>{s.language}</Text>
-                          </div>
+
                           <div>
                             <Text className="text-xs text-gray-400 block">Submitted</Text>
                             <Text strong>{new Date(s.createdAt).toLocaleDateString('en-IN')}</Text>
@@ -245,6 +242,28 @@ const OrderStatus = () => {
                             <div>
                               <Text className="text-xs text-gray-400 block mb-1">Message from Team</Text>
                               <Text className="text-sm text-gray-700">{s.adminNotes}</Text>
+                            </div>
+                          </>
+                        )}
+
+                        {s.status === 'completed' && (
+                          <>
+                            <Divider style={{ margin: '16px 0' }} />
+                            <div className="flex items-center justify-between flex-wrap gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+                              <div>
+                                <Text strong className="text-green-700 block text-sm">Your document is ready</Text>
+                                <Text className="text-xs text-gray-500">
+                                  ⏳ File available for download for <strong>6 days 23 hrs</strong> (dummy)
+                                </Text>
+                              </div>
+                              <Button
+                                type="primary"
+                                icon={<DownloadOutlined />}
+                                style={{ background: '#16a34a', borderColor: '#16a34a' }}
+                                onClick={() => {}}
+                              >
+                                Download File
+                              </Button>
                             </div>
                           </>
                         )}

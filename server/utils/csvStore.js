@@ -6,7 +6,7 @@ const CSV_PATH = path.join(__dirname, '../data/submissions.csv');
 
 const HEADERS = [
   'id', 'firstName', 'lastName', 'email', 'phone', 'country',
-  'service', 'pages', 'language', 'message', 'fileUrl', 'fileName',
+  'service', 'pages', 'preferredTool', 'language', 'message', 'fileUrl', 'fileName',
   'originalFileName', 'status', 'adminNotes', 'estimatedPrice',
   'createdAt', 'updatedAt', 'fileDeletedAt',
 ];

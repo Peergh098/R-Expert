@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import { services } from '../../data/services';
+
 
 const stats = [
   { num: '98%', label: 'Client Satisfaction' },
@@ -6,62 +8,9 @@ const stats = [
   { num: '100%', label: 'Confidential' },
 ];
 
-const steps = [
-  {
-    num: '01',
-    title: 'Choose Service',
-    desc: 'Browse and select the service that fits your academic need.',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-      </svg>
-    ),
-  },
-  {
-    num: '02',
-    title: 'Submit Document',
-    desc: 'Upload your file and fill in a quick form — under 2 minutes.',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-      </svg>
-    ),
-  },
-  {
-    num: '03',
-    title: 'Review & Analysis',
-    desc: 'Our experts process your document with precision and confidentiality.',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg>
-    ),
-  },
-  {
-    num: '04',
-    title: 'Payment Confirmation',
-    desc: 'Receive a quote and confirm payment securely before delivery.',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-      </svg>
-    ),
-  },
-  {
-    num: '05',
-    title: 'Final Delivery',
-    desc: 'Get your completed report delivered to your inbox on time.',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-      </svg>
-    ),
-  },
-];
-
 const Hero = () => {
   return (
-    <section className="bg-gradient-to-br from-[#1e3a5f] via-[#2d5a8e] to-[#1e3a5f] text-white py-20 lg:py-28 relative overflow-hidden">
+    <section className="bg-gradient-to-br from-[#1e3a5f] via-[#2d5a8e] to-[#1e3a5f] text-white py-20 lg:pb-18 lg:pt-12 relative overflow-hidden">
       {/* Background blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-72 h-72 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
@@ -70,30 +19,20 @@ const Hero = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-stretch">
 
           {/* LEFT — Text content */}
           <div>
-            {/* Badge */}
-            {/* <div className="inline-flex items-center bg-white/10 text-blue-200 text-xs font-medium px-4 py-2 rounded-full mb-6 backdrop-blur-sm border border-white/10">
-              <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse" />
-              Trusted by 5,000+ Researchers Worldwide
-            </div> */}
-
-            {/* Heading */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-5">
-              Expert Academic
-              <span className="text-amber-400 block">Research Services</span>
+              Academic <span className="text-amber-400">Sphere</span>
             </h1>
 
-            {/* Subtext */}
             <p className="text-blue-100 text-lg md:text-xl mb-8 leading-relaxed max-w-xl">
               Plagiarism reports, AI detection, proofreading, data analysis & more —
               delivered fast and with guaranteed quality.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4 mb-5">
+            <div className="flex flex-wrap gap-4 mb-8">
               <Link
                 to="/submit"
                 className="bg-amber-500 hover:bg-amber-600 text-white px-8 py-4 rounded-xl font-semibold text-base transition-all duration-200 shadow-lg hover:shadow-amber-500/30 hover:-translate-y-0.5"
@@ -124,40 +63,42 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* RIGHT — How it works */}
-          <div className="hidden lg:flex flex-col gap-6">
-            <div className="inline-flex items-center bg-white/10 border border-white/20 text-blue-200 text-xs font-semibold uppercase tracking-widest px-4 py-2 rounded-full mb-2 backdrop-blur-sm">How it works</div>
-            {steps.map((step, i) => (
-              <div key={step.num} className="flex gap-4 items-start relative">
-                {/* Connector line */}
-                {i < steps.length - 1 && (
-                  <div className="absolute left-[18px] top-10 w-px h-8 bg-white/20" />
-                )}
-                {/* Icon bubble */}
-                <div className="w-9 h-9 rounded-full bg-amber-400/20 border border-amber-400/40 flex items-center justify-center shrink-0 text-amber-400">
-                  {step.icon}
+          {/* RIGHT — Services list */}
+          <div className="hidden lg:flex flex-col mt-3">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-xs font-semibold uppercase tracking-widest text-blue-300">
+                Our Services
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-2.5 flex-1 content-start">
+              {services.map((service) => (
+                <div
+                  key={service.id}
+                  className="flex items-center gap-3 bg-white/8 hover:bg-white/15 border border-white/10 rounded-xl px-3 py-2.5 transition-colors duration-200"
+                >
+                  <span className="text-xs text-blue-100 font-medium leading-snug">
+                    {service.title}
+                  </span>
                 </div>
-                <div>
-                  <div className="font-semibold text-white text-sm mb-0.5">{step.title}</div>
-                  <div className="text-blue-200 text-xs leading-relaxed">{step.desc}</div>
-                </div>
-              </div>
-            ))}
-
-            {/* Trust note */}
-            <div className="mt-4 bg-amber-400/10 border border-amber-400/25 rounded-2xl p-4 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0 text-amber-400">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                </svg>
-              </div>
-              <div>
-                <div className="text-amber-400 font-semibold text-sm">100% Confidential & Secure</div>
-                <div className="text-blue-200 text-xs">Your documents are never shared or stored after delivery.</div>
-              </div>
+              ))}
             </div>
           </div>
 
+        </div>
+        {/* Badges — bottom of hero */}
+        <div className="flex flex-wrap items-center justify-center gap-3 mt-10 pt-8 border-t border-white/10">
+          <div className="flex items-center gap-2 bg-amber-500/20 border border-amber-400/40 text-amber-300 text-sm font-medium px-4 py-2 rounded-full">
+            <span>⚡</span>
+            <span>Reports delivered in <strong>under 30 minutes</strong></span>
+          </div>
+          <div className="flex items-center gap-2 bg-white/10 border border-white/20 text-blue-200 text-sm font-medium px-4 py-2 rounded-full">
+            <span>🌟</span>
+            <span>Trusted by <strong className="text-white">1,000+</strong> users</span>
+          </div>
+          <div className="flex items-center gap-2 bg-white/10 border border-white/20 text-blue-200 text-sm font-medium px-4 py-2 rounded-full">
+            <span>🔒</span>
+            <span>100% Confidential</span>
+          </div>
         </div>
       </div>
     </section>

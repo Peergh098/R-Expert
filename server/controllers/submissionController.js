@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { readAll, appendRow, findById, updateById, generateId } = require('../utils/csvStore');
-const { sendSubmissionConfirmation, sendAdminReply, sendOtp } = require('../utils/email');
+const { sendSubmissionConfirmation, sendAdminReply, sendOtp, sendDocumentReady } = require('../utils/email');
 const { generateOtp, saveOtp, verifyOtp } = require('../utils/otpStore');
 
 // Adds _id alias so frontend RTK Query cache tags (which use _id) work correctly
@@ -17,6 +17,7 @@ const createSubmission = async (req, res, next) => {
       country = 'India',
       service,
       pages = 1,
+      preferredTool = '',
       language = 'English',
       message = '',
     } = req.body;
@@ -30,7 +31,8 @@ const createSubmission = async (req, res, next) => {
       phone,
       country,
       service,
-      pages,
+      pages: Number(pages) || 1,
+      preferredTool,
       language,
       message,
       fileUrl: '',
@@ -67,7 +69,7 @@ const createSubmission = async (req, res, next) => {
 
 const getAllSubmissions = (req, res, next) => {
   try {
-    const { status, page = 1, limit = 20, search } = req.query;
+    const { status, page = 1, limit = 20, search, email, phone } = req.query;
     let rows = readAll();
 
     if (status) {
@@ -80,6 +82,12 @@ const getAllSubmissions = (req, res, next) => {
         r.lastName.toLowerCase().includes(s) ||
         r.email.toLowerCase().includes(s)
       );
+    }
+    if (email) {
+      rows = rows.filter(r => r.email.toLowerCase().includes(email.toLowerCase()));
+    }
+    if (phone) {
+      rows = rows.filter(r => r.phone && r.phone.includes(phone));
     }
 
     rows.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -244,6 +252,23 @@ const deleteSubmissionFile = (req, res, next) => {
   }
 };
 
+const sendDocumentToClient = async (req, res, next) => {
+  try {
+    const submission = findById(req.params.id);
+    if (!submission) return res.status(404).json({ message: 'Submission not found' });
+    if (submission.status !== 'completed') return res.status(400).json({ message: 'Submission is not completed yet' });
+    if (!submission.fileUrl) return res.status(400).json({ message: 'No file attached to this submission' });
+
+    const base = (process.env.BASE_URL || 'http://localhost:5000').replace(/\/$/, '');
+    const fileUrl = `${base}/uploads/${submission.fileName}`;
+    await sendDocumentReady(submission, fileUrl);
+
+    res.json({ message: 'Document sent to client email successfully' });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   createSubmission,
   getAllSubmissions,
@@ -254,4 +279,5 @@ module.exports = {
   deleteSubmissionFile,
   exportSubmissions,
   sendOtpHandler,
+  sendDocumentToClient,
 };
